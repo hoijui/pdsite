@@ -495,10 +495,9 @@ function serve() {
 	fi
 }
 
-check_deps
-
 cmd=${1:-}
 shift
+
 case $cmd in
 	-h|--help|help)
 		print_help
@@ -508,6 +507,11 @@ case $cmd in
 		print_version
 		exit 0
 		;;
+esac
+
+check_deps
+
+case $cmd in
 	init)
 		init "${@}"
 		;;
