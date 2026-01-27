@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 # SPDX-FileCopyrightText: 2016-2019 Gord Stephen <gord@gordstephen.ca>
-# SPDX-FileCopyrightText: 2019-2022 Robin Vobruba <hoijui.quaero@gmail.com>
+# SPDX-FileCopyrightText: 2019-2026 Robin Vobruba <hoijui.quaero@gmail.com>
 #
 # SPDX-License-Identifier: BSD-3-Clause
 
@@ -31,7 +31,8 @@ function print_help() {
 	echo "Options:"
 	echo "  -h, --help                   print this help message and exit"
 	echo "  -v, --version                print the tools version and exit"
-	echo "  -l, --local                  build or server for a local run of the site (not using the URL and base path)"
+	echo "  -l, --local                  build or serve for a local run of the site"
+	echo "                               (not using the URL and base path)"
 	echo "  -t, --theme <theme>          set the name of the theme"
 	echo "  -i, --input-ext <ext>        set the input extension (for example \".md\")"
 	echo "  -o, --output-folder <path>   set the path to the output folder"
