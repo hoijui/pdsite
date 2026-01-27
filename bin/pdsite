@@ -157,10 +157,6 @@ function find_source_files_navi() {
 	find . -not -path "*/\.*" -name "$extension_glob" -type f
 }
 
-function find_source_files() {
-	find . -not -path "*/\.*" -not -path "${out_exclude}*" -not -regex ".*/\(README\|LICENSE\|COPYING\|TODO\|AUTHORS\)$extension_glob" -name "*$extension_glob" -type f
-}
-
 function find_index_source_files() {
 	find . -not -path "*/\.*" -not -path "${out_exclude}*" -path "$index_file_glob" -type f
 }
