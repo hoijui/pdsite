@@ -372,7 +372,7 @@ function build() {
 	echo "Copy in other content files ..."
 	find_non_index_source_files | while read -r in_path
 	do
-		out_path=$(simplify_path "$(echo "$in_path" | sed 's|\./\(.*\)\.\(.*\)|\1/index.\2|' | make_slug)")
+		out_path=$(simplify_path "$(echo "$in_path" | sed -e 's|^\./||' -e 's|\(.*\)\.\(.*\)|\1/index.\2|' | make_slug)")
 		cp "$in_path" "$output_folder/$out_path"
 	done
 
