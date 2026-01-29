@@ -461,8 +461,10 @@ function build() {
 	{
 		echo "panflute-path: \"$filters_path\""
 		echo "panflute-filters: [add_local_link_prefix, replace_link_suffixes]"
-		# Uncomment this next line for debugging
-		# echo "panflute-verbose: true"
+		if $debug
+		then
+			echo "panflute-verbose: true"
+		fi
 	} > "$common_meta_file"
 
 	echo "Convert content files to context-aware HTML ..."
