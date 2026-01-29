@@ -393,6 +393,14 @@ function build() {
 
 	export simplify_path
 
+	if $debug
+	then
+		list_source_dirs > "$output_folder/list_source_dirs.txt.tmp"
+		list_non_index_source_files > "$output_folder/list_non_index_source_files.txt.tmp"
+		list_index_source_files > "$output_folder/list_index_source_files.txt.tmp"
+		list_source_files_navi > "$output_folder/list_source_files_navi.txt.tmp"
+	fi
+
 	echo "Generate base file structure ..."
 	list_source_dirs \
 		| make_slug \
