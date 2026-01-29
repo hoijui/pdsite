@@ -393,15 +393,15 @@ function build() {
 
 	echo "Generate local YAML ..."
 	find . -not -path "${out_exclude}*" -path "$index_file_glob" -type f | while read -r line; do
-		relpath=${line%/*}
-		site_path_abs=$(echo "$relpath" | cut -c 2-)
+		rel_path=${line%/*}
+		site_path_abs=$(echo "$rel_path" | cut -c 2-)
 
 		# Create local YAML block with auto-generated page name
-		name=$(echo "${relpath##*/}" | make_pretty)
-		sed 's|^pagename: _$|pagename: '"$name"'|' "$local_block_template" > "$relpath/$local_block"
+		name=$(echo "${rel_path##*/}" | make_pretty)
+		sed 's|^pagename: _$|pagename: '"$name"'|' "$local_block_template" > "$rel_path/$local_block"
 
 		# Create local YAML block with context-aware file tree data
-		sed 's|"path":"'"$site_path_abs"'",|\0"active":y,|' "$global_tree" > "$relpath/$local_tree"
+		sed 's|"path":"'"$site_path_abs"'",|\0"active":y,|' "$global_tree" > "$rel_path/$local_tree"
 	done
 
 	# This meta-data file is used for each markdown file to be converted,
