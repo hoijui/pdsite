@@ -14,6 +14,7 @@ install_path="${script_path%/*}/.."
 themes_path="${install_path}/themes"
 filters_path="${install_path}/filters"
 default_config="${install_path}/.pdsite.yml.default"
+debug=false
 
 function print_help() {
 	echo "$(basename "$0") - Simple static site generator, written in BASH, using pandoc."
@@ -31,6 +32,7 @@ function print_help() {
 	echo "Options:"
 	echo "  -h, --help                   print this help message and exit"
 	echo "  -v, --version                print the tools version and exit"
+	echo "  -d, --debug                  Additional output and do not clean up *.tmp files"
 	echo "  -l, --local                  build or serve for a local run of the site"
 	echo "                               (not using the URL and base path)"
 	echo "  -t, --theme <theme>          set the name of the theme"
@@ -240,6 +242,9 @@ function build() {
 			-v|--version)
 				print_version
 				exit 0
+				;;
+			-d|--debug)
+				debug=true
 				;;
 			-l|--local)
 				build_local=true
@@ -459,8 +464,13 @@ function build() {
 	fi
 	start_path_http="${start_path%index.html}"
 
-	echo "Clean up ..."
-	find . -path "*.tmp" -type f -delete
+	if $debug
+	then
+		echo "Clean up ..."
+		find . -path "*.tmp" -type f -delete
+	else
+		echo "Skipping cleanup due to debug mode."
+	fi
 
 	echo "Copy in theme assets ..."
 	cd "$theme_path"
