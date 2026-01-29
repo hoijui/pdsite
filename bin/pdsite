@@ -37,6 +37,8 @@ function print_help() {
 	echo "                               (not using the URL and base path)"
 	echo "  -t, --theme <theme>          set the name of the theme"
 	echo "  -i, --input-ext <ext>        set the input extension (for example \".md\")"
+	echo "      --input-index <file>     Read the list of (Markdown) input files from a file,"
+	echo "                               where they are separated by new-lines"
 	echo "  -o, --output-folder <path>   set the path to the output folder"
 	echo "  -u, --site-url <url>         set the sites base URL (for example \"https://www.mysite.com\")"
 	echo "  -p, --site-base-path <path>  set the sites base path (for example \"/base/path\")"
@@ -171,6 +173,42 @@ function find_source_dirs() {
 	find . -not -path "*/\.*" -not -path "${out_exclude}*" -type d
 }
 
+function list_source_files_navi() {
+	if _var_set "input_index_file"
+	then
+		cat "$input_index_file"
+	else
+		find_source_files_navi
+	fi
+}
+
+function list_index_source_files() {
+	if _var_set "input_index_file"
+	then
+		grep ".$index_file_glob\$" < "$input_index_file" || true
+	else
+		find_index_source_files
+	fi
+}
+
+function list_non_index_source_files() {
+	if _var_set "input_index_file"
+	then
+		grep -v ".$index_file_glob\$" < "$input_index_file"
+	else
+		find_non_index_source_files
+	fi
+}
+
+function list_source_dirs() {
+	if _var_set "input_index_file"
+	then
+		sed -e 's|/\?[^/]*$||' < "$input_index_file" | sort -u
+	else
+		find_source_dirs
+	fi
+}
+
 # Generate global file structure for navigation templates
 function navi() {
 	echo -e '\n---'
@@ -215,7 +253,7 @@ function navi() {
 
 			np_prev="$path"
 		done
-	done < <(find_source_files_navi | tr '\n' '\0' | xargs -0 dirname | sort | uniq)
+	done < <(list_source_files_navi | tr '\n' '\0' | xargs -0 dirname | sort | uniq)
 
 	# Close remaining folders
 	while [ $np_open -gt 0 ]
@@ -255,6 +293,10 @@ function build() {
 				;;
 			-i|--input-ext)
 				input_extension="$1"
+				shift
+				;;
+			--input-index)
+				input_index_file="$1"
 				shift
 				;;
 			-o|--output-folder)
@@ -352,13 +394,13 @@ function build() {
 	export simplify_path
 
 	echo "Generate base file structure ..."
-	find_source_dirs \
+	list_source_dirs \
 		| make_slug \
 		| while read -r in_path
 	do
 		mkdir -p "$output_folder/$(simplify_path "$in_path")"
 	done
-	find_non_index_source_files \
+	list_non_index_source_files \
 		| sed 's|\(.*\)\..*|\1|' \
 		| make_slug \
 		| while read -r in_path
@@ -367,7 +409,7 @@ function build() {
 	done
 
 	echo "Copy in index files ..."
-	find_index_source_files \
+	list_index_source_files \
 		| while read -r in_path
 	do
 		out_path=$(simplify_path "$(echo "$in_path" | make_slug)")
@@ -375,7 +417,7 @@ function build() {
 	done
 
 	echo "Copy in other content files ..."
-	find_non_index_source_files | while read -r in_path
+	list_non_index_source_files | while read -r in_path
 	do
 		out_path=$(simplify_path "$(echo "$in_path" | sed -e 's|^\./||' -e 's|\(.*\)\.\(.*\)|\1/index.\2|' | make_slug)")
 		cp "$in_path" "$output_folder/$out_path"
